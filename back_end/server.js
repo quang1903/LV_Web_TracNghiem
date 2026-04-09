@@ -8,6 +8,8 @@ const { errorHandler } = require('./middlewares/error.middleware');
 const examRoute = require('./src/routes/exam.route');
 const questionRoute = require('./src/routes/question.route');
 const resultRoute = require('./src/routes/result.route');
+const userRoute = require('./src/routes/user.route');
+const classroomRoute = require('./src/routes/classroom.route');
 
 dotenv.config();
 connectDB();
@@ -25,6 +27,10 @@ app.use('/api/exams', examRoute);
 app.use('/api/exams/:examId/questions', questionRoute);
 app.use('/api/results', resultRoute);
 app.use('/api/exams/:examId/results', resultRoute);
+app.use('/api/users', userRoute);
+// Thêm route teachers (alias)
+app.use('/api/teachers', userRoute);
+app.use('/api/classrooms', classroomRoute);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Server đang chạy!' });
