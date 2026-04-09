@@ -112,7 +112,7 @@ const Exams = () => {
                 )}
                 {exam.can_take && (
                   <button
-                    onClick={() => navigate(`/student/exams/${exam.id}`)}
+                    onClick={() => navigate(`/student/exams/${exam._id}`)}
                     className="px-4 py-2 rounded text-sm bg-green-600 hover:bg-green-700 text-white"
                   >
                     {exam.has_submitted ? 'Làm lại' : 'Vào thi'}

@@ -39,15 +39,13 @@ const ExamDetail = () => {
         // 2️⃣ Khởi tạo answers trống
         const initialAnswers = {};
         examData.questions?.forEach(q => {
-          initialAnswers[q.id] = null;
+          initialAnswers[q._id] = null;
         });
         setAnswers(initialAnswers);
 
         // 3️⃣ Tạo attempt mới nếu chưa có attempt
         if (!examData.has_submitted) {
-          const attemptRes = await axiosClient.post('/attempts', { exam_id: parseInt(id) });
-          const attemptData = attemptRes.data?.data || attemptRes.data;
-          setAttemptId(attemptData?.id || null);
+          setAttemptId(id); // dùng examId làm attemptId tạm thời
 
           // 4️⃣ Khởi tạo timer
           if (examData.duration) startTimer(examData.duration * 60);
@@ -86,7 +84,7 @@ const ExamDetail = () => {
     if (sec === null) return '00:00';
     const m = Math.floor(sec / 60);
     const s = sec % 60;
-    return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
   // === Chọn câu trả lời ===
@@ -110,11 +108,12 @@ const ExamDetail = () => {
 
     setSubmitting(true);
     try {
-      const res = await axiosClient.post(`/attempts/${attemptId}/submit`, {
-        time_spent: exam.duration ? exam.duration * 60 - (timeLeft || 0) : null
+      const answerArray = Object.values(answers);
+      const res = await axiosClient.post(`/exams/${id}/results/submit`, {
+        answers: answerArray
       });
       const attempt = res.data?.data || res.data;
-      navigate(`/student/result/${attempt?.id}`);
+      navigate('/student/attempts');
     } catch (error) {
       alert(error.response?.data?.message || 'Lỗi nộp bài');
       setSubmitting(false);
@@ -164,20 +163,20 @@ const ExamDetail = () => {
               <span className="text-blue-600">Câu {idx + 1}:</span> {q.content}
             </p>
             <div className="space-y-2 ml-4">
-              {q.answers?.map(a => (
+              {q.options?.map((option, optIdx) => (
                 <label
-                  key={a.id}
-                  className={`flex items-center p-2 border rounded cursor-pointer transition ${answers[q.id] === a.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`}
+                  key={optIdx}
+                  className={`flex items-center p-2 border rounded cursor-pointer transition ${answers[q._id] === option ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`}
                 >
                   <input
                     type="radio"
-                    name={`q-${q.id}`}
-                    value={a.id}
-                    checked={answers[q.id] === a.id}
-                    onChange={() => handleAnswerChange(q.id, a.id)}
+                    name={`q-${q._id}`}
+                    value={option}
+                    checked={answers[q._id] === option}
+                    onChange={() => handleAnswerChange(q._id, option)}
                     className="mr-3 w-4 h-4"
                   />
-                  <span className="text-gray-700">{a.content}</span>
+                  <span className="text-gray-700">{option}</span>
                 </label>
               ))}
             </div>

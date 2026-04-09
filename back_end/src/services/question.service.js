@@ -1,17 +1,25 @@
 const Question = require('../models/question.model');
+const Exam = require('../models/exam.model');
 
 const getByExam = async (examId) => {
   return await Question.find({ exam: examId });
 };
 
 const create = async ({ examId, content, options, correctAnswer, userId }) => {
-  return await Question.create({
+  const question = await Question.create({
     exam: examId,
     content,
     options,
     correctAnswer,
     createdBy: userId,
   });
+
+  // Thêm question vào exam
+  await Exam.findByIdAndUpdate(examId, {
+    $push: { questions: question._id }
+  });
+
+  return question;
 };
 
 const update = async (id, data) => {
