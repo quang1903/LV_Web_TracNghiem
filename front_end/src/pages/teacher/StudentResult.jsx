@@ -26,34 +26,22 @@ const StudentResult = () => {
 
   const fetchResults = async () => {
     if (!selectedExam) return;
-    
+
     setLoading(true);
     try {
       const examRes = await axiosClient.get(`/exams/${selectedExam}`);
       setExamInfo(examRes.data?.data);
-      
-      const res = await axiosClient.get(`/attempts/exam/${selectedExam}`);
+
+      const res = await axiosClient.get(`/results/exam/${selectedExam}`);
       let attempts = res.data?.data || [];
-      attempts = attempts.filter(a => a.status === 'submitted');
-      
-      const latestMap = new Map();
-      attempts.forEach(attempt => {
-        const existing = latestMap.get(attempt.user_id);
-        if (!existing || new Date(attempt.submitted_at) > new Date(existing.submitted_at)) {
-          latestMap.set(attempt.user_id, attempt);
-        }
-      });
-      
-      const attemptCounts = {};
-      attempts.forEach(a => attemptCounts[a.user_id] = (attemptCounts[a.user_id] || 0) + 1);
-      
-      const uniqueResults = Array.from(latestMap.values()).map(attempt => ({
+
+      const uniqueResults = attempts.map(attempt => ({
         ...attempt,
-        attempt_count: attemptCounts[attempt.user_id] || 1,
-        student_name: attempt.user?.name || 'N/A',
-        student_code: attempt.user?.student_code || '—'
+        student_name: attempt.student?.name || 'N/A',
+        student_code: attempt.student?.student_code || '—',
+        attempt_count: 1,
       }));
-      
+
       setResults(uniqueResults.sort((a, b) => (b.score || 0) - (a.score || 0)));
     } catch (error) {
       console.error('Lỗi:', error);
@@ -76,7 +64,7 @@ const StudentResult = () => {
   const exportToExcel = () => {
     if (results.length === 0) return;
     setExporting(true);
-    
+
     const data = [
       ['KẾT QUẢ BÀI THI'],
       ['Tên bài thi', examInfo?.title || 'N/A'],
@@ -85,11 +73,11 @@ const StudentResult = () => {
       [],
       ['STT', 'Họ tên', 'Mã sinh viên', 'Điểm', 'Số lần thi']
     ];
-    
+
     results.forEach((item, idx) => {
       data.push([idx + 1, item.student_name, item.student_code, item.score || 0, `${item.attempt_count}`]);
     });
-    
+
     const ws = XLSX.utils.aoa_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Kết quả');
@@ -99,7 +87,7 @@ const StudentResult = () => {
   };
 
   const totalStudents = results.length;
-  const avgScore = totalStudents > 0 
+  const avgScore = totalStudents > 0
     ? (results.reduce((sum, a) => sum + (a.score || 0), 0) / totalStudents).toFixed(1)
     : 0;
   const passedCount = results.filter(a => (a.score || 0) >= 5).length;
@@ -139,7 +127,7 @@ const StudentResult = () => {
             >
               <option value="">-- Chọn bài thi --</option>
               {exams.map(exam => (
-                <option key={exam.id} value={exam.id}>
+                <option key={exam._id} value={exam._id}>
                   {exam.title} — {exam.subject?.name}
                 </option>
               ))}
@@ -164,7 +152,7 @@ const StudentResult = () => {
             </div>
           ) : (
             <>
-            
+
 
               {/* Bảng điểm */}
               <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">

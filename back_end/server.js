@@ -31,6 +31,8 @@ app.use('/api/users', userRoute);
 // Thêm route teachers (alias)
 app.use('/api/teachers', userRoute);
 app.use('/api/classrooms', classroomRoute);
+app.use('/api/students', userRoute);
+app.use('/api/attempts', resultRoute);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Server đang chạy!' });
