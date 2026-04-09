@@ -1,0 +1,31 @@
+getAll - Lấy tất cả môn học
+javascriptreturn await Subject.find().populate('createdBy', 'name email');
+
+find() - lấy tất cả
+populate - thay vì trả về id của người tạo, trả về luôn tên và email
+
+
+getById - Lấy 1 môn học theo id
+javascriptconst subject = await Subject.findById(id);
+if (!subject) throw new Error('Không tìm thấy môn học');
+
+Tìm theo id, không có thì báo lỗi
+
+
+create - Tạo môn học mới
+javascriptconst existing = await Subject.findOne({ name });
+if (existing) throw new Error('Môn học đã tồn tại');
+return await Subject.create({ name, description, createdBy: userId });
+
+Kiểm tra tên trùng trước
+Lưu vào DB kèm id người tạo
+
+
+update - Cập nhật môn học
+javascriptconst subject = await Subject.findByIdAndUpdate(id, { name, description }, { new: true });
+
+new: true - trả về data sau khi cập nhật
+
+
+remove - Xóa môn học
+javascriptconst subject = await Subject.findByIdAndDelete(id);

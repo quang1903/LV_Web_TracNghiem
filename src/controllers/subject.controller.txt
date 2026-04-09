@@ -1,0 +1,30 @@
+subject.controller.js nhận request từ người dùng rồi gọi service xử lý:
+
+getAll - Lấy tất cả môn học
+
+Nhận request → gọi subjectService.getAll() → trả về danh sách
+
+
+getById - Lấy 1 môn học
+
+Lấy id từ URL (req.params.id) → gọi service → trả về 1 môn
+
+
+create - Tạo môn học mới
+
+Lấy name, description từ body
+Lấy userId từ req.user.id (do middleware JWT gắn vào)
+Gọi service tạo → trả về môn mới
+
+
+update - Cập nhật môn học
+
+Lấy id từ URL, data từ body → gọi service update
+
+
+remove - Xóa môn học
+
+Lấy id từ URL → gọi service xóa
+
+Tóm lại luồng:
+Request → controller (nhận data) → service (xử lý) → trả kết quả

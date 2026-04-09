@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoute = require('./src/routes/auth.route');
+const subjectRoute = require('./src/routes/subject.route');
 const { errorHandler } = require('./middlewares/error.middleware');
 
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoute);
+app.use('/api/subjects', subjectRoute);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Server đang chạy!' });
