@@ -26,31 +26,20 @@ const Subjects = () => {
     try {
       setLoading(true);
       
-      // Lấy danh sách bài thi của sinh viên (đã có has_submitted)
-      const examsRes = await axiosClient.get('/exams');
-      const allExams = examsRes.data?.data || [];
-      
-      // Lọc bài thi đã published
-      const publishedExams = allExams.filter(exam => exam.status === 'published');
-      
-      // Lấy danh sách môn học
       const subjectsRes = await axiosClient.get('/subjects');
       let allSubjects = subjectsRes.data?.data || subjectsRes.data || [];
       
-      // Lọc môn học có bài thi
-      const subjectIds = [...new Set(publishedExams.map(e => e.subject_id))];
-      const filteredSubjects = allSubjects.filter(sub => subjectIds.includes(sub.id));
+      const examsRes = await axiosClient.get('/exams');
+      const allExams = examsRes.data?.data || [];
       
-      // Thêm số lượng bài thi và trạng thái
-      const subjectsWithData = filteredSubjects.map(sub => {
-        const subjectExams = publishedExams.filter(e => e.subject_id === sub.id);
-        const examCount = subjectExams.length;
-        const hasUnfinished = subjectExams.some(e => !e.has_submitted);
-        
+      const subjectsWithData = allSubjects.map(sub => {
+        const subjectExams = allExams.filter(e => 
+          e.subject?._id === sub._id || e.subject === sub._id
+        );
         return {
           ...sub,
-          exams_count: examCount,
-          has_unfinished: hasUnfinished
+          exams_count: subjectExams.length,
+          has_unfinished: subjectExams.some(e => !e.has_submitted)
         };
       });
       
@@ -95,8 +84,8 @@ const Subjects = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {subjects.map(sub => (
             <div
-              key={sub.id}
-              onClick={() => handleSubjectClick(sub.id)}
+              key={sub._id}
+              onClick={() => handleSubjectClick(sub._id)}
               className="bg-white rounded-lg shadow p-5 hover:shadow-lg transition cursor-pointer"
             >
               <h3 className="font-semibold text-lg text-gray-800">{sub.name}</h3>

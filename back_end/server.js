@@ -57,8 +57,19 @@ app.get('/api/home', authenticate, async (req, res) => {
     const Result = require('./src/models/result.model');
     const Exam = require('./src/models/exam.model');
 
-    const results = await Result.find({ student: req.user.id });
+    const results = await Result.find({ student: req.user.id })
+      .populate({ path: 'exam', populate: { path: 'subject', select: 'name' } })
+      .sort({ createdAt: -1 });
+
     const exams = await Exam.find().populate('subject', 'name');
+
+    const avgScore = results.length > 0
+      ? Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length * 10) / 10
+      : 0;
+
+    const bestScore = results.length > 0
+      ? Math.max(...results.map(r => r.score))
+      : 0;
 
     res.json({
       success: true,
@@ -66,9 +77,8 @@ app.get('/api/home', authenticate, async (req, res) => {
         stats: {
           total_attempts: results.length,
           completed: results.length,
-          avg_score: results.length > 0
-            ? Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length * 10) / 10
-            : 0
+          avg_score: avgScore,
+          best_score: bestScore
         },
         recent_attempts: results.slice(0, 5),
         available_exams: exams.slice(0, 5)
