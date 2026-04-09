@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const response = await axiosClient.get('/me');
+      const response = await axiosClient.get('/auth/me');
       
       devLog('Fetch user response:', response.data);
       
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axiosClient.post('/login', { email, password });
+      const response = await axiosClient.post('/auth/login', { email, password });
       
       devLog('Login response:', response.data);
       
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
       const data = responseData.data;
       
       // Lấy token và user từ data
-      const token = data?.access_token;
+      const token = data?.token;
       let userData = data?.user;
       
       if (!token || !userData) {
@@ -149,7 +149,7 @@ export const AuthProvider = ({ children }) => {
       
       devLog('Register payload:', payload);
       
-      const response = await axiosClient.post('/register', payload);
+      const response = await axiosClient.post('/auth/register', payload);
       
       devLog('Register response:', response.data);
       
@@ -211,7 +211,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = localStorage.getItem('token');
       if (token) {
-        await axiosClient.post('/logout');
+        await axiosClient.post('/auth/logout');
       }
     } catch (error) {
       devError('Logout error:', error);
