@@ -13,21 +13,22 @@ const resultSchema = new mongoose.Schema(
       required: [true, 'Sinh viên không được để trống'],
     },
     answers: {
-      type: [Number], // mảng index đáp án sinh viên chọn
-      required: true,
+      type: [String],
     },
     score: {
       type: Number,
-      required: true,
-      min: 0,
-      max: 10,
+      default: 0,
     },
     totalCorrect: {
       type: Number,
-      required: true,
+      default: 0,
+    },
+    totalQuestions: {
+      type: Number,
+      default: 0,
     },
     timeTaken: {
-      type: Number, // thời gian làm bài (phút)
+      type: Number,
     },
     submittedAt: {
       type: Date,

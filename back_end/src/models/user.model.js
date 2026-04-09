@@ -36,13 +36,9 @@ const userSchema = new mongoose.Schema(
 );
 
 // Mã hóa mật khẩu trước khi lưu
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
-    next();
-    return;
-  }
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 10);
-  next();
 });
 // So sánh mật khẩu khi đăng nhập
 userSchema.methods.comparePassword = async function (password) {
