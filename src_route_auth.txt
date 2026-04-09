@@ -1,0 +1,39 @@
+auth.route.js là nơi định nghĩa API endpoint — tức là khai báo URL nào sẽ làm gì!
+javascriptrouter.post('/register', register);
+// URL: POST /api/auth/register → gọi hàm register trong controller
+
+router.post('/login', login);
+// URL: POST /api/auth/login → gọi hàm login trong controller
+```
+
+---
+
+Luồng hoàn chỉnh khi người dùng đăng ký:
+```
+Frontend gửi POST /api/auth/register
+  → route.js nhận, chuyển tới controller
+  → controller lấy data từ request
+  → gọi service xử lý
+  → service kiểm tra, lưu DB
+  → trả kết quả về frontend
+
+
+  const { register, login } = require('../controllers/auth.controller'); sao chỗ này chạy đường dẫn này mà ko chạy vô từ service
+
+
+
+Vì route không gọi thẳng vào service — nó đi theo đúng thứ tự:
+
+route → controller → service
+Cụ thể:
+
+auth.route.js chỉ biết controller thôi
+auth.controller.js mới biết service
+Tại sao không gọi thẳng route → service?
+
+Vì tách nhiệm vụ rõ ràng:
+
+Route → chỉ lo định nghĩa URL
+Controller → lo nhận/trả dữ liệu
+Service → lo xử lý logic
+Nếu route gọi thẳng service thì controller không có việc làm, code sẽ rối khi project lớn lên!

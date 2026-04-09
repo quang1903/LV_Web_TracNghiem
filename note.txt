@@ -1,0 +1,77 @@
+📁 config/
+
+db.js — kết nối MongoDB
+socket.js — khởi tạo Socket.io
+
+📁 middlewares/
+
+auth.middleware.js — kiểm tra token JWT hợp lệ không
+role.middleware.js — kiểm tra quyền (admin/giảng viên/sinh viên)
+error.middleware.js — bắt lỗi toàn hệ thống
+
+📁 src/models/
+
+user.model.js — schema người dùng (tên, email, mật khẩu, role)
+exam.model.js — schema đề thi (tên, thời gian, số câu, môn học)
+question.model.js — schema câu hỏi (nội dung, đáp án, độ khó)
+result.model.js — schema kết quả thi (điểm, thời gian nộp, đáp án đã chọn)
+subject.model.js — schema môn học
+
+📁 src/routes/
+
+auth.route.js — đăng ký, đăng nhập
+user.route.js — quản lý người dùng
+exam.route.js — tạo/sửa/xóa đề thi
+question.route.js — tạo/sửa/xóa câu hỏi
+result.route.js — lưu và xem kết quả thi
+ai.route.js — gọi AI ra đề tự động
+
+📁 src/controllers/
+
+auth.controller.js — xử lý logic đăng ký, đăng nhập
+user.controller.js — xử lý logic quản lý user
+exam.controller.js — xử lý logic đề thi
+question.controller.js — xử lý logic câu hỏi
+result.controller.js — xử lý logic kết quả
+ai.controller.js — xử lý logic gọi AI
+
+📁 src/services/
+
+auth.service.js — nghiệp vụ đăng ký, login, hash mật khẩu
+exam.service.js — nghiệp vụ tạo đề, random câu hỏi
+question.service.js — nghiệp vụ CRUD câu hỏi
+result.service.js — nghiệp vụ tính điểm, lưu kết quả
+ai.service.js — gọi Claude/OpenAI API sinh câu hỏi
+
+📁 src/sockets/
+
+exam.socket.js — xử lý real-time: đếm giờ, tự động nộp bài
+
+📁 utils/
+
+jwt.util.js — tạo và verify token
+response.util.js — format response trả về chuẩn
+export.util.js — xuất Excel/PDF bảng điểm
+
+📄 Root
+
+server.js — khởi động server, kết nối DB, load routes
+.env — lưu biến môi trường (DB_URL, JWT_SECRET...)
+-----------------------------------------------------------------
+
+Username : nhutquang19032004_db_user
+Password : PmycqUNf94D00BBX
+-------------------------------------------------------------------
+mongodb+srv://nhutquang19032004_db_user:PmycqUNf94D00BBX@quiz-cluster.1yrhwzf.mongodb.net/?appName=quiz-cluster
+
+--------------------------------------------------------------------
+user.model.js là nơi định nghĩa cấu trúc dữ liệu của người dùng trong MongoDB.
+Ví dụ user trong hệ thống thi của mình sẽ trông như này trong database:
+json{
+  "name": "Nguyễn Văn A",
+  "email": "a@gmail.com",
+  "password": "đã mã hóa",
+  "role": "student",
+  "createdAt": "2024-01-01"
+}
+user.model.js sẽ định nghĩa đúng cái cấu trúc đó — bắt buộc có email, email phải unique, role chỉ được là admin/teacher/student

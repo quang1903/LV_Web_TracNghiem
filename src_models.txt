@@ -1,0 +1,52 @@
+exam.model.js là đề thi — trước khi code bạn hình dung cấu trúc nhé:
+json{
+  "title": "Đề thi Toán giữa kỳ",
+  "subject": "id môn Toán",
+  "questions": ["id câu 1", "id câu 2", "id câu 3"...],
+  "duration": 60,
+  "totalQuestions": 30,
+  "startTime": "2024-01-01 08:00",
+  "endTime": "2024-01-01 10:00",
+  "createdBy": "id giảng viên",
+  "isActive": true
+}
+--------------------------------------------------
+
+
+Giờ giải thích question.model.js trước nhé — câu hỏi trong hệ thống thi sẽ có:
+json{
+  "content": "2 + 2 bằng bao nhiêu?",
+  "options": ["1", "2", "3", "4"],
+  "correctAnswer": 3,
+  "difficulty": "easy",
+  "subject": "id môn Toán",
+  "createdBy": "id giảng viên"
+}
+
+
+-----------------------------------------------------
+
+subject.model.js là môn học — dùng để phân loại câu hỏi và đề thi theo từng môn.
+Ví dụ trong database sẽ trông như này:
+json{
+  "name": "Toán",
+  "description": "Môn toán đại cương",
+  "createdBy": "id của giảng viên tạo môn này"
+}
+
+--------------------------------
+
+user.model.js là nơi định nghĩa cấu trúc dữ liệu của người dùng trong MongoDB.
+Hiểu đơn giản như này:
+
+Ví dụ user trong hệ thống thi của mình sẽ trông như này trong database:
+json{
+  "name": "Nguyễn Văn A",
+  "email": "a@gmail.com",
+  "password": "đã mã hóa",
+  "role": "student",
+  "createdAt": "2024-01-01"
+}
+
+
+-------------------------------------------------

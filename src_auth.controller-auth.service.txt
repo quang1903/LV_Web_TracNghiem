@@ -1,0 +1,22 @@
+auth.controller.js không xử lý logic — nó chỉ làm trung gian thôi:
+Người dùng gửi request
+  → controller nhận dữ liệu (email, password...)
+  → gọi service xử lý
+  → trả kết quả về cho người dùng
+Ví dụ khi đăng nhập:
+javascript// Nhận email, password từ request
+const { email, password } = req.body;
+
+// Gọi service xử lý
+const result = await authService.login({ email, password });
+
+// Trả kết quả về
+res.json({ success: true, data: result });
+Nói chung:
+
+Service → nghĩ, xử lý, tính toán
+Controller → nhận, chuyển, trả
+
+
+
+--------------------------------------------------------------------------
