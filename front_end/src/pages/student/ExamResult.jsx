@@ -15,7 +15,7 @@ const ExamResult = () => {
 
   const fetchResult = async () => {
     try {
-      const res = await axiosClient.get(`/attempts/${attemptId}/result`);
+      const res = await axiosClient.get(`/results/${attemptId}`);
       setResult(res.data?.data || res.data);
     } catch (error) {
       console.error(error);
@@ -33,18 +33,18 @@ const ExamResult = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 text-center">
-        <h2 className="text-2xl font-bold mb-2">{result.exam_title}</h2>
-        <p className="text-gray-600 mb-6">{result.subject_name}</p>
-        
+        <h2 className="text-2xl font-bold mb-2">{result.exam?.title}</h2>
+        <p className="text-gray-600 mb-6">{result.exam?.subject?.name}</p>
+
         <div className="inline-block p-6 bg-blue-50 rounded-full mb-4">
           <div className="text-5xl font-bold text-blue-600">{result.score}</div>
           <div className="text-sm text-gray-500">điểm</div>
         </div>
-        
+
         <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
           <div className="p-3 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-500">Số câu đúng</p>
-            <p className="text-xl font-bold text-green-600">{result.correct_answers}/{result.total_questions}</p>
+            <p className="text-xl font-bold text-green-600">{result.totalCorrect}/{result.totalQuestions}</p>
           </div>
           <div className="p-3 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-500">Thời gian</p>
@@ -60,7 +60,7 @@ const ExamResult = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="space-y-4">
         <h3 className="text-xl font-bold mb-4">📝 Chi tiết câu hỏi</h3>
         {result.questions?.map((q, idx) => (
@@ -89,7 +89,7 @@ const ExamResult = () => {
           </div>
         ))}
       </div>
-      
+
       <div className="mt-8 flex gap-4">
         <button onClick={() => navigate('/student')} className="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
           Về trang chủ
@@ -98,8 +98,8 @@ const ExamResult = () => {
           Danh sách bài thi
         </button>
         {canRetake && (
-          <button 
-            onClick={() => navigate(`/student/exams/${result.exam_id}`)} 
+          <button
+            onClick={() => navigate(`/student/exams/${result.exam_id}`)}
             className="flex-1 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700"
           >
             Làm lại (còn {remainingAttempts} lượt)

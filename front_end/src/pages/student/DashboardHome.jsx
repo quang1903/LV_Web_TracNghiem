@@ -119,7 +119,7 @@ const DashboardHome = () => {
                     </p>
                   </div>
                   <button
-                    onClick={() => navigate(`/student/result/${attempt.id}`)}
+                    onClick={() => navigate(`/student/result/${attempt._id}`)}
                     className="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700"
                   >
                     Xem kết quả
