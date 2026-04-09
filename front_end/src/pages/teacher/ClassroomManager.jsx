@@ -57,7 +57,7 @@ export default function ClassroomManager() {
     e.preventDefault();
     try {
       if (editing) {
-        await axiosClient.put(`/classrooms/${editing.id}`, form);
+        await axiosClient.put(`/classrooms/${editing._id}`, form);
         alert("Cập nhật thành công");
       } else {
         await axiosClient.post("/classrooms", form);
@@ -76,7 +76,7 @@ export default function ClassroomManager() {
     if (!window.confirm(`Xóa lớp "${cls.name}"?`)) return;
 
     try {
-      await axiosClient.delete(`/classrooms/${cls.id}`);
+      await axiosClient.delete(`/classrooms/${cls._id}`);
       alert("Xóa thành công");
       fetchClasses();
     } catch (err) {
@@ -89,7 +89,7 @@ export default function ClassroomManager() {
   const openInvite = async (cls) => {
     try {
       setSelectedClass(cls);
-      const res = await axiosClient.get(`/classrooms/${cls.id}/invite-code`);
+      const res = await axiosClient.get(`/classrooms/${cls._id}/invite-code`);
       setInviteInfo(res.data?.data || null);
       setInviteOpen(true);
     } catch (err) {
@@ -101,7 +101,7 @@ export default function ClassroomManager() {
   const regenerateInvite = async () => {
     try {
       const res = await axiosClient.post(
-        `/classrooms/${selectedClass.id}/regenerate-code`
+        `/classrooms/${selectedClass._id}/regenerate-code`
       );
       setInviteInfo(res.data?.data || null);
       alert("Tạo mã mới thành công");
@@ -153,7 +153,7 @@ export default function ClassroomManager() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {classes.map((cls) => (
               <div
-                key={cls.id}
+                key={cls._id}
                 className="bg-white border rounded-xl shadow-sm p-4"
               >
                 <h2 className="font-bold text-lg text-gray-900">{cls.name}</h2>
@@ -171,7 +171,7 @@ export default function ClassroomManager() {
 
 
 <button
-  onClick={() => navigate(`/teacher/classes/${cls.id}`)}
+  onClick={() => navigate(`/teacher/classes/${cls._id}`)}
   className="bg-gray-100 border border-gray-400 text-gray-800 px-3 py-1 rounded hover:bg-gray-200 transition text-sm"
 >
   Chi tiết

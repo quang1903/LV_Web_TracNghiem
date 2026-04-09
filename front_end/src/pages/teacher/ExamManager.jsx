@@ -66,8 +66,8 @@ const ExamManager = () => {
       duration: exam.duration || 30,
       max_attempts: exam.max_attempts || 1,
       status: exam.status || 'draft',
-      start_time: exam.start_time ? exam.start_time.slice(0,16) : '',
-      end_time: exam.end_time ? exam.end_time.slice(0,16) : '',
+      start_time: exam.start_time ? exam.start_time.slice(0, 16) : '',
+      end_time: exam.end_time ? exam.end_time.slice(0, 16) : '',
     } : {
       title: '',
       subject_id: selectedSubjectId || '',
@@ -85,15 +85,16 @@ const ExamManager = () => {
     e.preventDefault();
     try {
       if (editingExam) {
-        const res = await axiosClient.put(`/exams/${editingExam.id}`, formData);
-        setExams(exams.map(ex => ex.id === editingExam.id ? res.data.data : ex));
+        await axiosClient.put(`/exams/${editingExam._id}`, formData);
         alert('Cập nhật thành công');
       } else {
-        const res = await axiosClient.post('/exams', formData);
-        setExams([res.data.data, ...exams]);
+        await axiosClient.post('/exams', formData);
         alert('Tạo bài thi thành công');
       }
       setShowModal(false);
+      // Reload lại toàn bộ danh sách
+      const examRes = await axiosClient.get('/exams');
+      setExams(examRes.data?.data || []);
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || 'Lỗi tạo/cập nhật bài thi');
@@ -114,7 +115,7 @@ const ExamManager = () => {
       }
 
       if (res.data.success) {
-        setExams(exams.filter(ex => ex.id !== exam.id));
+        setExams(exams.filter(ex => ex._id !== exam.id));
         alert('Xóa thành công');
       }
     } catch (err) {
@@ -126,8 +127,10 @@ const ExamManager = () => {
   // update exam status
   const handleStatusChange = async (id, status) => {
     try {
-      const res = await axiosClient.patch(`/exams/${id}/status`, { status });
-      setExams(exams.map(ex => ex.id === id ? res.data.data : ex));
+      await axiosClient.patch(`/exams/${id}/status`, { status });
+      alert('Cập nhật trạng thái thành công!');
+      const examRes = await axiosClient.get('/exams');
+      setExams(examRes.data?.data || []);
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || 'Lỗi cập nhật trạng thái');
@@ -162,7 +165,7 @@ const ExamManager = () => {
           className="w-full px-2 py-2 border rounded"
         >
           <option value="">Tất cả môn học</option>
-          {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+          {subjects.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
         </select>
       </div>
 
@@ -173,14 +176,14 @@ const ExamManager = () => {
         <table className="w-full text-sm bg-white rounded shadow overflow-x-auto">
           <thead className="bg-gray-50 text-gray-500 uppercase">
             <tr>
-              {['Tiêu đề','Môn học','TG','Lần thi','Trạng thái','Hành động'].map(h => (
+              {['Tiêu đề', 'Môn học', 'TG', 'Lần thi', 'Trạng thái', 'Hành động'].map(h => (
                 <th key={h} className="px-4 py-2 text-left">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {exams.map(ex => (
-              <tr key={ex.id} className="hover:bg-gray-50">
+              <tr key={ex._id} className="hover:bg-gray-50">
                 <td className="px-4 py-2">{ex.title}</td>
                 <td className="px-4 py-2">{ex.subject?.name || '-'}</td>
                 <td className="px-4 py-2">{ex.duration}p</td>
@@ -188,17 +191,17 @@ const ExamManager = () => {
                 <td className="px-4 py-2">
                   <select
                     value={ex.status}
-                    onChange={e => handleStatusChange(ex.id, e.target.value)}
+                    onChange={e => handleStatusChange(ex._id, e.target.value)}
                     className="border rounded px-2 py-1 text-xs"
                   >
                     <option value="draft">Nháp</option>
                     <option value="published">Xuất bản</option>
-                    <option value="closed">Đóng</option>
+                    
                   </select>
                 </td>
                 <td className="px-4 py-2 flex gap-1">
                   <button
-                    onClick={() => navigate(`/teacher/questions?exam_id=${ex.id}`)}
+                    onClick={() => navigate(`/teacher/questions?exam_id=${ex._id}`)}
                     className="px-2 py-1 bg-purple-600 text-white rounded text-xs hover:bg-purple-700"
                   >Câu hỏi</button>
                   <button
@@ -224,41 +227,41 @@ const ExamManager = () => {
             <form onSubmit={handleSubmit} className="space-y-3">
               <input
                 type="text" placeholder="Tiêu đề" value={formData.title}
-                onChange={e => setFormData({...formData,title:e.target.value})} className="w-full border rounded px-3 py-2" required
+                onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full border rounded px-3 py-2" required
               />
               <select
-                value={formData.subject_id} onChange={e => setFormData({...formData,subject_id:e.target.value})}
+                value={formData.subject_id} onChange={e => setFormData({ ...formData, subject_id: e.target.value })}
                 className="w-full border rounded px-3 py-2" required
               >
                 <option value="">Chọn môn học</option>
-                {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                {subjects.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
               </select>
               <div className="flex gap-2">
                 <input type="number" placeholder="Thời gian (phút)" value={formData.duration}
-                  onChange={e=>setFormData({...formData,duration:Math.max(1,parseInt(e.target.value)||30)})}
+                  onChange={e => setFormData({ ...formData, duration: Math.max(1, parseInt(e.target.value) || 30) })}
                   className="w-1/2 border rounded px-3 py-2" required
                 />
                 <input type="number" placeholder="Số lần thi" value={formData.max_attempts}
-                  onChange={e=>setFormData({...formData,max_attempts:Math.min(10,Math.max(1,parseInt(e.target.value)||1))})}
+                  onChange={e => setFormData({ ...formData, max_attempts: Math.min(10, Math.max(1, parseInt(e.target.value) || 1)) })}
                   className="w-1/2 border rounded px-3 py-2" required
                 />
               </div>
               <div className="flex gap-2">
                 <input type="datetime-local" placeholder="Bắt đầu" value={formData.start_time}
-                  onChange={e=>setFormData({...formData,start_time:e.target.value})} className="w-1/2 border rounded px-3 py-2"
+                  onChange={e => setFormData({ ...formData, start_time: e.target.value })} className="w-1/2 border rounded px-3 py-2"
                 />
                 <input type="datetime-local" placeholder="Kết thúc" value={formData.end_time}
-                  onChange={e=>setFormData({...formData,end_time:e.target.value})} className="w-1/2 border rounded px-3 py-2"
+                  onChange={e => setFormData({ ...formData, end_time: e.target.value })} className="w-1/2 border rounded px-3 py-2"
                 />
               </div>
-              <select value={formData.status} onChange={e=>setFormData({...formData,status:e.target.value})} className="w-full border rounded px-3 py-2">
+              <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })} className="w-full border rounded px-3 py-2">
                 <option value="draft">Nháp</option>
                 <option value="published">Xuất bản</option>
-                <option value="closed">Đóng</option>
+                
               </select>
               <div className="flex gap-2">
-                <button type="submit" className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">{editingExam?'Cập nhật':'Tạo'}</button>
-                <button type="button" onClick={()=>setShowModal(false)} className="flex-1 bg-gray-200 py-2 rounded hover:bg-gray-300">Hủy</button>
+                <button type="submit" className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">{editingExam ? 'Cập nhật' : 'Tạo'}</button>
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-gray-200 py-2 rounded hover:bg-gray-300">Hủy</button>
               </div>
             </form>
           </div>

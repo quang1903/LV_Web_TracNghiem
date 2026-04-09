@@ -12,6 +12,7 @@ const userRoute = require('./src/routes/user.route');
 const classroomRoute = require('./src/routes/classroom.route');
 const { authenticate } = require('./middlewares/auth.middleware');
 
+
 dotenv.config();
 connectDB();
 
@@ -35,11 +36,22 @@ app.use('/api/classrooms', classroomRoute);
 app.use('/api/students', userRoute);
 app.use('/api/attempts', resultRoute);
 // Student routes
-app.use('/api/my-classes', classroomRoute);
+app.get('/api/my-classes', authenticate, async (req, res) => {
+  try {
+    const Classroom = require('./src/models/classroom.model');
+    const classrooms = await Classroom.find({ students: req.user.id })
+      .populate('teacher', 'name email')
+      .populate('students', 'name email');
+    res.json({ success: true, data: classrooms });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 app.use('/api/my-attempts', resultRoute);
-
-
-
+//app.use('/api/leave-class', classroomRoute);
+//app.use('/api/check-code', classroomRoute);
+// app.use('/api/join-class', classroomRoute);
+// app.use('/api/class-students', classroomRoute);
 
 
 app.get('/', (req, res) => {

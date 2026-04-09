@@ -2,7 +2,7 @@ const examService = require('../services/exam.service');
 
 const getAll = async (req, res) => {
   try {
-    const exams = await examService.getAll(req.user?.id);
+    const exams = await examService.getAll(req.user?.id, req.query.subject_id);
     res.json({ success: true, data: exams });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

@@ -20,7 +20,7 @@ const JoinClass = () => {
     setError('');
     
     try {
-      const res = await axiosClient.get(`/check-code/${inviteCode.toUpperCase()}`);
+      const res = await axiosClient.get(`/classrooms/check-code/${inviteCode.toUpperCase()}`);
       setClassInfo(res.data.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Mã không hợp lệ');
@@ -33,7 +33,7 @@ const JoinClass = () => {
   const handleJoin = async () => {
     setLoading(true);
     try {
-      const res = await axiosClient.post('/join-class', {
+      const res = await axiosClient.post('/classrooms/join-class', {
         invite_code: inviteCode.toUpperCase()
       });
       alert(res.data.message);

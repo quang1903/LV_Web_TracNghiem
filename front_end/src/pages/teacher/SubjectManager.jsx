@@ -39,7 +39,7 @@ export default function SubjectManager() {
     fetchSubjects();
   }, []);
 
-  const openModal = (subject = { id: null, name: "", description: "" }) => {
+  const openModal = (subject = { _id: null, name: "", description: "" }) => {
     setCurrentSubject(subject);
     setModalOpen(true);
   };
@@ -54,8 +54,8 @@ export default function SubjectManager() {
     if (!currentSubject.name.trim()) return showToast("Tên môn học không được để trống", "error");
 
     try {
-      if (currentSubject.id) {
-        await axiosClient.put(`/subjects/${currentSubject.id}`, currentSubject);
+      if (currentSubject._id) {
+        await axiosClient.put(`/subjects/${currentSubject._id}`, currentSubject);
         showToast("Cập nhật môn học thành công!", "success");
       } else {
         await axiosClient.post("/subjects", currentSubject);
@@ -98,11 +98,10 @@ export default function SubjectManager() {
       {/* Toast đơn giản */}
       {toast.visible && (
         <div
-          className={`fixed top-4 right-4 px-4 py-3 rounded shadow transition-opacity duration-500 ${
-            toast.type === "success"
+          className={`fixed top-4 right-4 px-4 py-3 rounded shadow transition-opacity duration-500 ${toast.type === "success"
               ? "bg-green-500 text-white"
               : "bg-red-500 text-white"
-          }`}
+            }`}
         >
           {toast.message}
         </div>
@@ -148,8 +147,8 @@ export default function SubjectManager() {
                 </tr>
               ) : (
                 paginatedSubjects.map((subj) => (
-                  <tr key={subj.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 border">{subj.id}</td>
+                  <tr key={subj._id} className="hover:bg-gray-50">
+                    <td className="px-4 py-2 border">{subj._id}</td>
                     <td className="px-4 py-2 border">{subj.name}</td>
                     <td className="px-4 py-2 border">{subj.description || "-"}</td>
                     <td className="px-4 py-2 border">
@@ -160,7 +159,7 @@ export default function SubjectManager() {
                         Sửa
                       </button>
                       <button
-                        onClick={() => deleteSubject(subj.id)}
+                        onClick={() => deleteSubject(subj._id)}
                         className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                       >
                         Xóa
@@ -179,9 +178,8 @@ export default function SubjectManager() {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`px-3 py-1 rounded ${
-                    page === currentPage ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
+                  className={`px-3 py-1 rounded ${page === currentPage ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
                 >
                   {page}
                 </button>
@@ -196,7 +194,7 @@ export default function SubjectManager() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
             <h2 className="text-xl font-bold mb-4 text-gray-800">
-              {currentSubject.id ? "Sửa Môn học" : "Thêm Môn học"}
+              {currentSubject._id ? "Sửa Môn học" : "Thêm Môn học"}
             </h2>
             <input
               type="text"

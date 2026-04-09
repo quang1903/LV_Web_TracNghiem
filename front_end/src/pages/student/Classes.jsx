@@ -26,7 +26,7 @@ const Classes = () => {
   const leaveClass = async (classId, className) => {
     if (!window.confirm(`Rời khỏi lớp "${className}"?`)) return;
     try {
-      await axiosClient.delete(`/leave-class/${classId}`);
+      await axiosClient.delete(`/classrooms/leave/${classId}`);
       fetchClasses();
       alert('Rời lớp thành công');
     } catch (err) {

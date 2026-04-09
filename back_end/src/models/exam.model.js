@@ -7,11 +7,10 @@ const examSchema = new mongoose.Schema(
       required: [true, 'Tên đề thi không được để trống'],
       trim: true,
     },
-    subject: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Subject',
-      required: [true, 'Môn học không được để trống'],
-    },
+subject: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Subject',
+},
     questions: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -24,21 +23,26 @@ const examSchema = new mongoose.Schema(
       min: [1, 'Thời gian thi phải lớn hơn 0'],
     },
     totalQuestions: {
-      type: Number,
-      required: [true, 'Số câu hỏi không được để trống'],
-    },
-    startTime: {
-      type: Date,
-      required: [true, 'Thời gian bắt đầu không được để trống'],
-    },
-    endTime: {
-      type: Date,
-      required: [true, 'Thời gian kết thúc không được để trống'],
-    },
+  type: Number,
+  default: 0,
+},
+    // startTime: {
+    //   type: Date,
+    //   required: [true, 'Thời gian bắt đầu không được để trống'],
+    // },
+    // endTime: {
+    //   type: Date,
+    //   required: [true, 'Thời gian kết thúc không được để trống'],
+    // },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    status: {
+  type: String,
+  enum: ['draft', 'published', 'closed'],
+  default: 'draft',
+},
     isActive: {
       type: Boolean,
       default: true,

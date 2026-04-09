@@ -1,11 +1,12 @@
 const Exam = require('../models/exam.model');
 
-const getAll = async (userId) => {
-  const exams = await Exam.find()
+const getAll = async (userId, subjectId) => {
+  const query = subjectId ? { subject: subjectId } : {};
+  
+  const exams = await Exam.find(query)
     .populate('subject', 'name')
     .populate('createdBy', 'name email');
 
-  // Thêm thông tin cho từng bài thi
   const Result = require('../models/result.model');
   
   const examsWithInfo = await Promise.all(exams.map(async (exam) => {
@@ -29,20 +30,22 @@ const getAll = async (userId) => {
   return examsWithInfo;
 };
 
-const create = async ({ title, subject, duration, totalQuestions, startTime, endTime, userId }) => {
+const create = async (data) => {
   return await Exam.create({
-    title,
-    subject,
-    duration,
-    totalQuestions,
-    startTime,
-    endTime,
-    createdBy: userId,
+    title: data.title,
+    subject: data.subject_id || data.subject,
+    duration: data.duration,
+    totalQuestions: data.totalQuestions || data.max_attempts || 0,
+    createdBy: data.userId,
   });
 };
 
 const update = async (id, data) => {
-  const exam = await Exam.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+  const exam = await Exam.findByIdAndUpdate(
+    id, 
+    { subject: data.subject_id || data.subject, ...data },
+    { new: true, runValidators: true }
+  ).populate('subject', 'name');
   if (!exam) throw new Error('Không tìm thấy đề thi');
   return exam;
 };

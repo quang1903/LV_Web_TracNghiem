@@ -34,7 +34,7 @@ const ClassroomDetail = () => {
 
       // 2) Lấy danh sách học sinh
       const studentsRes = await axiosClient.get(
-        `/class-students?classroom_id=${id}`
+        `/classrooms/${id}/students`
       );
       setStudents(studentsRes.data?.data || []);
 
@@ -102,6 +102,8 @@ const ClassroomDetail = () => {
       alert(err.response?.data?.message || "Lỗi giao bài thi");
     }
   };
+
+  
 
   // ================= REMOVE EXAM =================
   const handleRemoveExam = async (examId) => {

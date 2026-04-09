@@ -39,7 +39,7 @@ const QuestionManager = () => {
     setLoading(true);
     try {
       const res = await axiosClient.get(`/questions?exam_id=${id}`);
-      setSelectedExam(exams.find(e => e.id == id));
+      setSelectedExam(exams.find(e => e._id == id));
       setQuestions(res.data?.data || []);
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
@@ -109,7 +109,7 @@ const QuestionManager = () => {
           <select value={examId || ''} onChange={e => e.target.value ? setSearchParams({ exam_id: e.target.value }) : setSearchParams({})}
             className="flex-1 p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">-- Chọn bài thi --</option>
-            {exams.map(ex => <option key={ex.id} value={ex.id}>{ex.title} - {ex.subject?.name}</option>)}
+            {exams.filter(ex => ex.status === 'published').map(ex => <option key={ex._id} value={ex._id}>{ex.title} - {ex.subject?.name}</option>)}
           </select>
           {examId && (
             <button onClick={() => setShowImportModal(true)}
