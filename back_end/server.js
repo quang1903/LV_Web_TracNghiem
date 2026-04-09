@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const authRoute = require('./src/routes/auth.route');
 const subjectRoute = require('./src/routes/subject.route');
 const { errorHandler } = require('./middlewares/error.middleware');
+const examRoute = require('./src/routes/exam.route');
 
 dotenv.config();
 connectDB();
@@ -14,9 +15,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 // Routes
 app.use('/api/auth', authRoute);
 app.use('/api/subjects', subjectRoute);
+app.use('/api/exams', examRoute);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Server đang chạy!' });
