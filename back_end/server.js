@@ -53,14 +53,30 @@ app.get('/', (req, res) => {
 
 // Home dashboard student
 app.get('/api/home', authenticate, async (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      stats: { total_attempts: 0, completed: 0, avg_score: 0 },
-      recent_attempts: [],
-      available_exams: []
-    }
-  });
+  try {
+    const Result = require('./src/models/result.model');
+    const Exam = require('./src/models/exam.model');
+
+    const results = await Result.find({ student: req.user.id });
+    const exams = await Exam.find().populate('subject', 'name');
+
+    res.json({
+      success: true,
+      data: {
+        stats: {
+          total_attempts: results.length,
+          completed: results.length,
+          avg_score: results.length > 0
+            ? Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length * 10) / 10
+            : 0
+        },
+        recent_attempts: results.slice(0, 5),
+        available_exams: exams.slice(0, 5)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 // Error handler phải đặt cuối cùng
