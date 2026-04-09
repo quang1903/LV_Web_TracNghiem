@@ -10,6 +10,7 @@ const questionRoute = require('./src/routes/question.route');
 const resultRoute = require('./src/routes/result.route');
 const userRoute = require('./src/routes/user.route');
 const classroomRoute = require('./src/routes/classroom.route');
+const { authenticate } = require('./middlewares/auth.middleware');
 
 dotenv.config();
 connectDB();
@@ -33,9 +34,33 @@ app.use('/api/teachers', userRoute);
 app.use('/api/classrooms', classroomRoute);
 app.use('/api/students', userRoute);
 app.use('/api/attempts', resultRoute);
+// Student routes
+app.use('/api/my-classes', classroomRoute);
+app.use('/api/my-attempts', resultRoute);
+
+
+
+
 
 app.get('/', (req, res) => {
   res.json({ message: 'Server đang chạy!' });
+});
+
+
+
+
+
+
+// Home dashboard student
+app.get('/api/home', authenticate, async (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      stats: { total_attempts: 0, completed: 0, avg_score: 0 },
+      recent_attempts: [],
+      available_exams: []
+    }
+  });
 });
 
 // Error handler phải đặt cuối cùng
