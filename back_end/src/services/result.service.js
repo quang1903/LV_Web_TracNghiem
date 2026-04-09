@@ -5,22 +5,25 @@ const submit = async ({ examId, userId, answers }) => {
   const exam = await Exam.findById(examId).populate('questions');
   if (!exam) throw new Error('Không tìm thấy đề thi');
 
-  // Chấm điểm
+  const total = exam.questions.length;
   let correct = 0;
+
   exam.questions.forEach((q, index) => {
-    if (answers[index] === q.correctAnswer) correct++;
+    const studentAnswer = String(answers[index] || '').trim();
+    const correctAnswer = String(q.correctAnswer || '').trim();
+    if (studentAnswer === correctAnswer) correct++;
   });
 
-  const total = exam.questions.length;
   const score = total > 0 ? Math.round((correct / total) * 10 * 10) / 10 : 0;
 
   const result = await Result.create({
     exam: examId,
-    student: userId,       // đổi user → student
+    student: userId,
     answers,
     score,
-    totalCorrect: correct, // đổi correctCount → totalCorrect
+    totalCorrect: correct,
     totalQuestions: total,
+    submittedAt: new Date(),
   });
 
   return result;

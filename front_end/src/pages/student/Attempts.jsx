@@ -64,7 +64,7 @@ const Attempts = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {attempts.map((attempt) => (
-                <tr key={attempt.id} className="hover:bg-gray-50">
+                <tr key={attempt._id} className="hover:bg-gray-50">
                   <td className="px-4 sm:px-6 py-3 whitespace-nowrap">
                     {attempt.exam?.title}
                   </td>
@@ -73,21 +73,20 @@ const Attempts = () => {
                   </td>
                   <td className="px-4 sm:px-6 py-3 whitespace-nowrap">
                     <span
-                      className={`font-bold ${
-                        attempt.score >= 5 ? 'text-green-600' : 'text-red-600'
-                      }`}
+                      className={`font-bold ${attempt.score >= 5 ? 'text-green-600' : 'text-red-600'
+                        }`}
                     >
                       {attempt.score}
                     </span>
                   </td>
                   <td className="px-4 sm:px-6 py-3 text-gray-500 whitespace-nowrap">
-                    {attempt.submitted_at
-                      ? new Date(attempt.submitted_at).toLocaleDateString('vi-VN')
+                    {attempt.submittedAt || attempt.submitted_at
+                      ? new Date(attempt.submittedAt || attempt.submitted_at).toLocaleDateString('vi-VN')
                       : 'N/A'}
                   </td>
                   <td className="px-4 sm:px-6 py-3 whitespace-nowrap">
                     <button
-                      onClick={() => navigate(`/student/result/${attempt.id}`)}
+                      onClick={() => navigate(`/student/result/${attempt._id}`)}
                       className="px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base bg-blue-500 hover:bg-blue-600 text-white rounded"
                     >
                       Xem kết quả
