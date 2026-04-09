@@ -61,7 +61,7 @@ const Classes = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {classes.map(cls => (
-            <div key={cls.id} className="bg-white rounded shadow p-4">
+            <div key={cls._id} className="bg-white rounded shadow p-4">
               <h3 className="font-semibold text-lg">{cls.name}</h3>
               <p className="text-sm text-gray-500 mt-1">
                 Giảng viên: {cls.teacher?.name}
@@ -71,13 +71,13 @@ const Classes = () => {
               </p>
               <div className="flex gap-2 mt-4">
                 <button
-                  onClick={() => navigate(`/student/classes/${cls.id}`)}
+                  onClick={() => navigate(`/student/classes/${cls._id}`)}
                   className="flex-1 bg-blue-600 text-white py-1 rounded text-sm hover:bg-blue-700"
                 >
                   Xem chi tiết
                 </button>
                 <button
-                  onClick={() => leaveClass(cls.id, cls.name)}
+                  onClick={() => leaveClass(cls._id, cls.name)}
                   className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
                 >
                   Rời lớp
